@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useFeedQuery } from "../../features/feeds/useFreeQuery";
+import { useFeedQuery } from "../../features/feeds/useFeedQuery";
 import { useReaderStore } from "../../store/useReaderStore";
 import ArticleCard from "./ArticleCard";
 import ArticleFilters from "./ArticleFilters";

@@ -9,7 +9,7 @@ function FeedList() {
   const removeFeed = useReaderStore((state) => state.removeFeed);
 
   return (
-    <aside
+    <section
       aria-label="Your feeds"
       className="rounded-xl border border-border bg-panel p-4"
     >
@@ -60,7 +60,7 @@ function FeedList() {
           })}
         </ul>
       )}
-    </aside>
+    </section>
   );
 }
 

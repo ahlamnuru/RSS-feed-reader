@@ -24,46 +24,45 @@ function FeedForm() {
       addFeed(result.feed);
       setUrl("");
     } catch (requestError) {
-      if (requestError instanceof Error) {
-        setError(requestError.message);
-      } else {
-        setError("Unable to add this feed");
-      }
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Unable to add this feed",
+      );
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <label
-        htmlFor="feed-url"
-        className="block text-sm font-medium text-slate-300"
-      >
+    <form id="add-feed" onSubmit={handleSubmit} className="space-y-3">
+      <label htmlFor="feed-url" className="block text-sm font-medium text-ink">
         RSS feed URL
       </label>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col gap-2">
         <input
           id="feed-url"
           type="url"
           value={url}
           onChange={(event) => setUrl(event.target.value)}
           placeholder="https://example.com/feed.xml"
-          className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-orange-400"
+          aria-describedby={error ? "feed-url-error" : undefined}
+          aria-invalid={error ? true : undefined}
+          className="min-h-11 min-w-0 rounded-lg border border-border bg-page px-3 text-sm text-ink placeholder:text-faint"
         />
 
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-lg bg-orange-500 px-5 py-3 font-semibold text-white hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 rounded-lg bg-accent px-4 text-sm font-semibold text-white hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? "Adding…" : "Add feed"}
         </button>
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-400">
+        <p id="feed-url-error" role="alert" className="text-sm text-danger">
           {error}
         </p>
       )}

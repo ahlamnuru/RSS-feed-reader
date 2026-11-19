@@ -49,11 +49,7 @@ function ArticleCard({ article }: ArticleCardProps) {
   const sourceName = getSourceName(article.feedUrl);
 
   return (
-    <article
-      className={`relative border-b border-border-subtle px-4 py-5 transition-colors hover:bg-panel/70 sm:px-6 ${
-        isRead ? "bg-page" : "bg-page"
-      }`}
-    >
+    <article className="relative border-b border-border-subtle bg-page px-4 py-5 transition-colors hover:bg-panel/70 sm:px-6">
       <div className="flex gap-3">
         <span
           aria-hidden="true"
@@ -103,10 +99,7 @@ function ArticleCard({ article }: ArticleCardProps) {
               className="min-h-11 rounded-md px-3 text-sm font-medium text-muted hover:bg-panel-hover hover:text-ink"
             >
               {isSaved ? "Saved" : "Save"}
-              <span className="sr-only">
-                {" "}
-                {isSaved ? "article" : "article"}
-              </span>
+              <span className="sr-only">: {article.title}</span>
             </button>
 
             <button
