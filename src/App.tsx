@@ -1,22 +1,29 @@
-import Header from "./components/layout/header";
+import ArticleList from "./components/articles/ArticleList";
 import FeedForm from "./components/feeds/FeedForm";
 import FeedList from "./components/feeds/FeedList";
-import ArticleList from "./components/articles/ArticleList";
+import Header from "./components/layout/header";
 
 function App() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-page text-ink">
       <Header />
 
-      <div className="mx-auto grid max-w-6xl gap-6 p-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <div className="space-y-6">
-          <FeedForm />
-          <FeedList />
-        </div>
+      <main
+        id="main-content"
+        className="mx-auto grid max-w-[1600px] lg:grid-cols-[260px_minmax(0,1fr)]"
+      >
+        <aside className="border-b border-border bg-panel p-4 lg:min-h-[calc(100vh-4rem)] lg:border-r lg:border-b-0">
+          <div className="space-y-4">
+            <FeedForm />
+            <FeedList />
+          </div>
+        </aside>
 
-        <ArticleList />
-      </div>
-    </main>
+        <div className="min-w-0">
+          <ArticleList />
+        </div>
+      </main>
+    </div>
   );
 }
 

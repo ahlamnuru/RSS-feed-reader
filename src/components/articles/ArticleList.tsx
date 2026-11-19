@@ -22,9 +22,13 @@ function ArticleList() {
 
   if (!selectedFeedUrl) {
     return (
-      <section className="rounded-xl border border-slate-800 p-5">
-        <p className="text-slate-400">
-          Select a feed to view its articles.
+      <section
+        aria-live="polite"
+        className="rounded-xl border border-border bg-page p-6"
+      >
+        <h2 className="text-lg font-semibold text-ink">All items</h2>
+        <p className="mt-2 text-sm text-muted">
+          Add or select a feed to see its articles here.
         </p>
       </section>
     );
@@ -32,26 +36,37 @@ function ArticleList() {
 
   if (query.isLoading) {
     return (
-      <section className="rounded-xl border border-slate-800 p-5">
-        <p className="text-slate-400">Loading articles…</p>
+      <section aria-live="polite" className="space-y-3">
+        <p className="text-sm text-muted">Loading articles…</p>
+        <div className="h-28 animate-pulse rounded-xl bg-panel" />
+        <div className="h-28 animate-pulse rounded-xl bg-panel" />
       </section>
     );
   }
 
   if (query.isError) {
     return (
-      <section className="rounded-xl border border-red-900 p-5">
-        <p className="text-red-400">
-          {query.error instanceof Error
-            ? query.error.message
-            : "Unable to load articles"}
+      <section
+        role="alert"
+        className="rounded-xl border border-border bg-page p-6"
+      >
+        <h2 className="font-semibold text-ink">We couldn’t load this feed</h2>
+        <p className="mt-2 text-sm text-muted">
+          Check the feed address or try refreshing in a moment.
         </p>
+        <button
+          type="button"
+          onClick={() => query.refetch()}
+          className="mt-4 min-h-11 rounded-lg bg-accent px-4 text-sm font-semibold text-white hover:bg-accent-hover"
+        >
+          Try again
+        </button>
       </section>
     );
   }
 
-  const normalizedSearch = searchTerm.toLowerCase().trim();
   const articles = query.data?.articles ?? [];
+  const normalizedSearch = searchTerm.toLowerCase().trim();
 
   const filteredArticles = articles.filter((article) => {
     const matchesSearch =
@@ -71,55 +86,62 @@ function ArticleList() {
   });
 
   return (
-    <section>
-      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold">
-          {query.data?.feed.title ?? "Articles"}
-        </h2>
+    <section aria-labelledby="article-list-heading">
+      <div className="flex flex-col gap-4 border-b border-border bg-page p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div>
+          <h2
+            id="article-list-heading"
+            className="text-xl font-semibold text-ink"
+          >
+            {activeFilter === "saved" ? "Saved" : "All items"}
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            {filteredArticles.length}{" "}
+            {filteredArticles.length === 1 ? "article" : "articles"}
+          </p>
+        </div>
 
         <button
           type="button"
           onClick={() => query.refetch()}
           disabled={query.isFetching}
-          className="rounded-md bg-slate-800 px-3 py-2 text-sm hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 rounded-lg border border-border px-4 text-sm font-medium text-ink hover:bg-panel disabled:opacity-60"
         >
           {query.isFetching ? "Refreshing…" : "Refresh"}
         </button>
       </div>
 
-      <div className="mb-5 space-y-4">
+      <div className="space-y-3 border-b border-border bg-page p-4 sm:px-6">
         <label htmlFor="article-search" className="sr-only">
           Search articles
         </label>
-
         <input
           id="article-search"
           type="search"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
           placeholder="Search articles..."
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-orange-400"
+          className="min-h-11 w-full rounded-lg border border-border bg-page px-3 text-sm text-ink placeholder:text-faint sm:max-w-md"
         />
-
         <ArticleFilters />
       </div>
 
-      {filteredArticles.length === 0 ? (
-        <div className="rounded-xl border border-slate-800 p-5">
-          <p className="text-slate-400">
-            No articles match your search or filter.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredArticles.map((article) => (
+      <div aria-live="polite" aria-busy={query.isFetching}>
+        {filteredArticles.length === 0 ? (
+          <div className="p-6 text-sm text-muted">
+            {searchTerm
+              ? "No articles match that search. Try another word."
+              : "No articles match this filter."}
+          </div>
+        ) : (
+          filteredArticles.map((article) => (
             <ArticleCard
               key={article.link || article.title}
               article={article}
             />
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </section>
   );
 }

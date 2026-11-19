@@ -1,7 +1,7 @@
 import { useReaderStore } from "../../store/useReaderStore";
 
 const filters = [
-  { value: "all", label: "All" },
+  { value: "all", label: "All items" },
   { value: "unread", label: "Unread" },
   { value: "saved", label: "Saved" },
 ] as const;
@@ -13,7 +13,11 @@ function ArticleFilters() {
   );
 
   return (
-    <div className="flex flex-wrap gap-2" aria-label="Article filters">
+    <div
+      className="flex flex-wrap gap-2"
+      role="group"
+      aria-label="Filter articles"
+    >
       {filters.map((filter) => {
         const isActive = activeFilter === filter.value;
 
@@ -23,10 +27,10 @@ function ArticleFilters() {
             type="button"
             aria-pressed={isActive}
             onClick={() => setActiveFilter(filter.value)}
-            className={`rounded-full px-4 py-2 text-sm font-medium ${
+            className={`min-h-11 rounded-lg px-3 text-sm font-medium ${
               isActive
-                ? "bg-orange-500 text-white"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                ? "bg-accent-soft text-accent"
+                : "text-muted hover:bg-panel-hover"
             }`}
           >
             {filter.label}

@@ -8,62 +8,58 @@ function FeedList() {
   const selectFeed = useReaderStore((state) => state.selectFeed);
   const removeFeed = useReaderStore((state) => state.removeFeed);
 
-  if (feeds.length === 0) {
-    return (
-      <section className="rounded-xl border border-slate-800 p-5">
-        <p className="text-sm text-slate-400">
-          No feeds yet. Add an RSS URL to get started.
-        </p>
-      </section>
-    );
-  }
-
   return (
-    <aside className="rounded-xl border border-slate-800 bg-slate-900 p-3">
-      <h2 className="mb-3 px-2 text-sm font-semibold text-slate-400">
+    <aside
+      aria-label="Your feeds"
+      className="rounded-xl border border-border bg-panel p-4"
+    >
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-faint">
         Your feeds
       </h2>
 
-      <ul className="space-y-2">
-        {feeds.map((feed) => {
-          const isSelected = feed.url === selectedFeedUrl;
+      {feeds.length === 0 ? (
+        <p className="text-sm leading-6 text-muted">
+          Your feeds will appear here after you add one.
+        </p>
+      ) : (
+        <ul className="space-y-1">
+          {feeds.map((feed) => {
+            const isSelected = feed.url === selectedFeedUrl;
 
-          return (
-            <li key={feed.url}>
-              <div
-                className={`flex items-center rounded-lg ${
-                  isSelected
-                    ? "bg-orange-500/15 ring-1 ring-orange-500"
-                    : "hover:bg-slate-800"
-                }`}
-              >
-                <button
-                  type="button"
-                  onClick={() => selectFeed(feed.url)}
-                  className="min-w-0 flex-1 px-3 py-3 text-left"
-                  aria-current={isSelected ? "page" : undefined}
+            return (
+              <li key={feed.url}>
+                <div
+                  className={`flex min-h-11 items-center rounded-lg ${
+                    isSelected
+                      ? "bg-accent-soft text-accent"
+                      : "text-muted hover:bg-panel-hover"
+                  }`}
                 >
-                  <span className="block truncate font-medium text-white">
-                    {feed.title || "Untitled feed"}
-                  </span>
-                  <span className="block truncate text-xs text-slate-500">
-                    {feed.url}
-                  </span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => selectFeed(feed.url)}
+                    aria-current={isSelected ? "true" : undefined}
+                    className="min-w-0 flex-1 px-3 py-2 text-left text-sm font-medium"
+                  >
+                    <span className="block truncate">
+                      {feed.title || "Untitled feed"}
+                    </span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => removeFeed(feed.url)}
-                  className="mr-2 rounded-md px-2 py-1 text-sm text-slate-400 hover:bg-slate-700 hover:text-red-400"
-                  aria-label={`Remove ${feed.title}`}
-                >
-                  ×
-                </button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                  <button
+                    type="button"
+                    onClick={() => removeFeed(feed.url)}
+                    aria-label={`Remove ${feed.title || "untitled feed"}`}
+                    className="mr-1 grid size-9 shrink-0 place-items-center rounded-md text-lg text-faint hover:bg-panel-hover hover:text-danger"
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </aside>
   );
 }
