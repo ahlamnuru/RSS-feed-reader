@@ -1,75 +1,77 @@
-# React + TypeScript + Vite
+# Frontpage
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small RSS reader I built for the [Frontend Mentor RSS feed reader challenge](https://www.frontendmentor.io/challenges/rss-feed-reader). Paste a feed link, read the latest articles, save the ones you like and mark what you've already read.
 
-Currently, two official plugins are available:
+**Live site:** https://rss-feed-reader-pi.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it does
 
-## React Compiler
+- Add RSS 2.0 and Atom feeds by URL
+- Shows the articles from the feed you select
+- Search articles by title or description
+- Filter by All, Unread or Saved
+- Save articles and mark them read or unread
+- Remove feeds you no longer want
+- Remembers your feeds, saved articles and read state in the browser, so there is no account and nothing to sign up for
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## What it doesn't do yet
 
-## Expanding the ESLint configuration
+I haven't finished the whole challenge. These are still on my list:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- A combined timeline from all feeds (right now you see one feed at a time)
+- Categories for organizing feeds
+- OPML import and export
+- Guest mode using the sample feeds from the challenge
+- An in-app reader view
+- A landing page
+- Accounts
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Built with
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React 19 and TypeScript
+- Vite
+- Tailwind CSS 4
+- Zustand for the app state (feeds, saved and read articles)
+- TanStack Query for fetching and caching articles
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## How it works
 
+Browsers won't let a web page download a feed straight from another website (that's CORS). So the app asks its own endpoint, `/api/feed?url=...`, to download the feed and send the XML back.
+
+- When running locally, that endpoint is a small plugin in `vite.config.ts`.
+- On Vercel, it's a serverless function in `api/feed.ts`.
+
+Once the XML arrives, `DOMParser` reads it. RSS `<item>` tags and Atom `<entry>` tags both get turned into the same article shape, and HTML is stripped out of the descriptions.
+
+Only the feed list, saved links and read links are stored (in localStorage). The articles themselves are fetched again when needed and cached for five minutes.
+
+## Run it locally
+
+You need Node 20 or newer and [pnpm](https://pnpm.io/).
+
+```bash
+git clone https://github.com/ahlamnuru/RSS-feed-reader.git
+cd RSS-feed-reader
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Then open http://localhost:5173.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project structure
 
 ```
+api/feed.ts                  feed proxy for Vercel
+src/
+  components/
+    articles/                article list, cards, filters
+    feeds/                   add-feed form and feed list
+    layout/                  header
+  features/feeds/
+    feedApi.ts               fetches and parses RSS and Atom
+    useFeedQuery.ts          TanStack Query hook
+  store/useReaderStore.ts    Zustand store
+  types/feed.ts              Article and Feed types
+vite.config.ts               includes the local feed proxy
+```
+
